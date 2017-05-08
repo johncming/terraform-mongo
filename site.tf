@@ -2,8 +2,16 @@ variable "ip" {
   type = "string"
 }
 
+variable "mongo_port" {
+  default = 27017
+}
+
+variable "web_port" {
+  default = 8081
+}
+
 provider "docker" {
-  host = "tcp://192.168.99.${var.ip}:2376"
+  host = "tcp://${var.ip}:2376"
 }
 
 resource "docker_image" "mongo" {
@@ -21,7 +29,7 @@ resource "docker_container" "mongo" {
 
   ports {
     internal = 27017
-    external  = 27017
+    external  = "${var.mongo_port}"
   }
 
   volumes {
@@ -30,7 +38,9 @@ resource "docker_container" "mongo" {
   }
 }
 
-resource "docker_volume" "shared_volume" {}
+resource "docker_volume" "shared_volume" {
+  name = "mongo"
+}
 
 resource "docker_container" "mongo-web" {
   name  = "mongo-web"
@@ -38,7 +48,7 @@ resource "docker_container" "mongo-web" {
 
   ports {
     internal = 8081
-    external = 8081
+    external = "${var.web_port}"
   }
 
   links = ["mongo"]
