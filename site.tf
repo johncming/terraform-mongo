@@ -7,7 +7,7 @@ variable "mongo_port" {
 }
 
 variable "web_port" {
-  default = 8081
+  default = 80
 }
 
 provider "docker" {
